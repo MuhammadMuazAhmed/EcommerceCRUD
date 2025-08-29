@@ -1,20 +1,48 @@
 package Ecommerce;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.Properties;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 @WebServlet("/CrudServlet")
 public class CrudServlet extends HttpServlet {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	private static final String URL = "jdbc:mysql://localhost:3306/web_app";
-	private static final String User = "root";
-	private static final String Pass = "Muaz2003@";
+	private String dbUrl;
+	private String dbUser;
+	private String dbPassword;
+
+	@Override
+	public void init() throws ServletException {
+		try {
+			// Load the properties file using ServletContext
+			Properties props = new Properties();
+			String configPath = "/WEB-INF/classes/config.properties";
+			InputStream input = getServletContext().getResourceAsStream(configPath);
+
+			if (input == null) {
+				throw new ServletException("Unable to find config.properties at " + configPath);
+			}
+
+			props.load(input);
+
+			// Get the database properties
+			dbUrl = props.getProperty("db.url");
+			dbUser = props.getProperty("db.user");
+			dbPassword = props.getProperty("db.password");
+
+			if (dbUrl == null || dbUser == null || dbPassword == null) {
+				throw new ServletException("Database properties not found in config file");
+			}
+
+			input.close();
+		} catch (IOException e) {
+			throw new ServletException("Error loading configuration: " + e.getMessage());
+		}
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -24,7 +52,7 @@ public class CrudServlet extends HttpServlet {
 
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection(URL, User, Pass);
+			Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
 			if (action.equals("delete")) {
 				int id = Integer.parseInt(req.getParameter("id"));
@@ -78,7 +106,7 @@ public class CrudServlet extends HttpServlet {
 			int quantity = Integer.parseInt(req.getParameter("quantity"));
 
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection conn = DriverManager.getConnection(URL, User, Pass);
+			Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
 			if ("update".equals(action)) {
 				try {

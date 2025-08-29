@@ -1,0 +1,36 @@
+# Ignore configuration files with sensitive data
+/src/main/webapp/WEB-INF/classes/config.properties
+
+# Compiled class files
+*.class
+
+# Build directories
+/build/
+/bin/
+/target/
+
+# Eclipse specific files
+.settings/
+.classpath
+.project
+
+# Logs
+*.log
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDE specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Other
+.DS_Store
+Thumbs.db
